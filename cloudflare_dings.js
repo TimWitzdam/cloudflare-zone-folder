@@ -1,21 +1,12 @@
 let zonesFetched = false;
-let folders = [
-  {
-    id: 1,
-    name: "Test folder 1",
-    zones: ["agencylabs.ai", "legende.cc"],
-  },
-  {
-    id: 2,
-    name: "Test folder 2",
-    zones: ["cryptodisplay.net"],
-  },
-  {
-    id: 3,
-    name: "Test folder 3",
-    zones: [],
-  },
-];
+let addFolderButtonAdded = false;
+
+browser.storage.sync.get("folders").then((data) => {
+  if (Object.keys(data).length === 0 && data.constructor === Object)
+    browser.storage.sync.set({
+      folders: [],
+    });
+});
 
 function getIDFromZone(zone) {
   return zone.getAttribute("data-testid").split("zone-card-")[1];
@@ -23,14 +14,16 @@ function getIDFromZone(zone) {
 
 function hideZones() {
   let zones = document.querySelectorAll('[data-testid^="zone-card-"]');
-  let zonesInFolders = folders.reduce((acc, folder) => {
-    return acc.concat(folder.zones);
-  }, []);
+  browser.storage.sync.get("folders").then((data) => {
+    let zonesInFolders = data.folders.reduce((acc, folder) => {
+      return acc.concat(folder.zones);
+    }, []);
 
-  for (zoneEl of zones) {
-    if (zonesInFolders.includes(getIDFromZone(zoneEl)))
-      zoneEl.style.display = "none";
-  }
+    for (zoneEl of zones) {
+      if (zonesInFolders.includes(getIDFromZone(zoneEl)))
+        zoneEl.style.display = "none";
+    }
+  });
 }
 
 function changeZoneAllZoneVisability(visible) {
@@ -41,14 +34,15 @@ function changeZoneAllZoneVisability(visible) {
 }
 
 function getZones() {
-  for (folder of folders.reverse()) {
-    createFolderElement(folder);
-  }
-  hideZones();
+  browser.storage.sync.get("folders").then((data) => {
+    for (folder of data.folders.reverse()) {
+      createFolderElement(folder);
+    }
+    hideZones();
+  });
 }
 
-function openFolder(folderID) {
-  const folder = folders.find((folder) => folder.id === folderID);
+function openFolder(folder) {
   let folderElements = document.querySelectorAll('[id^="folder-"]');
   let zoneCardsEl = document.querySelector('[data-testid="zone-cards"]');
   let zones = document.querySelectorAll('[data-testid^="zone-card-"]');
@@ -119,7 +113,7 @@ function createFolderElement(folder) {
   `;
   zoneCardsEl.insertBefore(newFolderEl, zoneCardsEl.firstChild);
 
-  newFolderEl.addEventListener("click", () => openFolder(folder.id));
+  newFolderEl.addEventListener("click", () => openFolder(folder));
 }
 
 let observer = new MutationObserver(function (mutations) {
@@ -136,3 +130,118 @@ let observer = new MutationObserver(function (mutations) {
 });
 
 observer.observe(document.body, { childList: true, subtree: true });
+
+let addFolderObserver = new MutationObserver(function (mutations) {
+  mutations.forEach(function (mutation) {
+    if (mutation.addedNodes) {
+      let element = document.querySelector('[data-testid="add-site-button"]');
+      if (element && !addFolderButtonAdded) {
+        addFolderObserver.disconnect();
+        addFolderButtonAdded = true;
+        const addFolderEl = element.parentElement.cloneNode(true);
+        addFolderEl.querySelector("span").innerHTML = "Add folder";
+        addFolderEl.querySelector("a").href = "#";
+        element.parentElement.parentElement.insertBefore(
+          addFolderEl,
+          element.parentElement
+        );
+        addFolderEl.addEventListener("click", () => {
+          const bgEl = document.createElement("div");
+          bgEl.style.position = "fixed";
+          bgEl.style.top = 0;
+          bgEl.style.left = 0;
+          bgEl.style.width = "100vw";
+          bgEl.style.height = "100vh";
+          bgEl.style.backgroundColor = "rgba(0, 0, 0, 0.7)";
+          bgEl.style.display = "flex";
+          bgEl.style.justifyContent = "center";
+          bgEl.style.alignItems = "center";
+          bgEl.style.zIndex = "10000";
+
+          let zoneElements = document.querySelectorAll(
+            '[data-testid^="zone-card-"]'
+          );
+          let zones = [];
+          for (zoneEl of zoneElements) {
+            zones.push(getIDFromZone(zoneEl));
+          }
+
+          bgEl.innerHTML = `
+          <div style="background-color: white;border-radius: 1rem;padding: 2rem;">
+            <form id="new-folder-form">
+            <div style="display: flex; justify-content: space-between;">
+              <div>
+                <label for="folder-name">Folder name</label>
+                <input id="folder-name"/>
+              </div>
+              <div>
+                <button type="button" id="new-folder-close">X</button>
+              </div>
+            </div>
+            <br />
+            <br />
+            <label style="margin-bottom: 0.5rem">Included Zones</label>
+            <div style="display: grid;gap: 0.5rem;max-height: 20rem;overflow-y: scroll;margin-bottom: 2rem;">
+            ${zones
+              .map(
+                (zone) =>
+                  `<div style="display: flex;gap: 0.3rem;align-items: center;" id="new-folder-zones">
+                    <label for="${zone}">${zone}</label>
+                    <input type="checkbox" id="${zone}" value="${zone}" />
+                  </div>`
+              )
+              .join("")}
+            </div>
+            <button type="submit" style="background-color: var(--cf-blue-4);padding: 0.3rem;padding-left: 0.7rem;padding-right: 0.7rem;color: white;width: 100%;border-radius: 4px;font-size: 14px;">
+              Add folder
+            </button>
+            </form>
+          </div> 
+          `;
+          document.body.append(bgEl);
+
+          bgEl.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const newFolderName = bgEl.querySelector("#folder-name").value;
+            let selectedZones = [];
+
+            const checkboxes = bgEl.querySelectorAll('input[type="checkbox"]');
+
+            checkboxes.forEach((checkbox) => {
+              if (checkbox.checked) {
+                selectedZones.push(checkbox.value);
+              }
+            });
+
+            browser.storage.sync.get("folders").then((data) => {
+              browser.storage.sync.set({
+                folders: [
+                  ...data.folders,
+                  {
+                    id: Math.floor(Math.random() * 1000000),
+                    name: newFolderName,
+                    zones: selectedZones,
+                  },
+                ],
+              });
+
+              let folderElements = document.querySelectorAll('[id^="folder-"]');
+              for (folderEl of folderElements) {
+                folderEl.remove();
+              }
+              getZones();
+            });
+
+            bgEl.remove();
+          });
+
+          bgEl
+            .querySelector("#new-folder-close")
+            .addEventListener("click", () => bgEl.remove());
+        });
+      }
+    }
+  });
+});
+
+addFolderObserver.observe(document.body, { childList: true, subtree: true });

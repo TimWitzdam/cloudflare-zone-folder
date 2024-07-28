@@ -11,5 +11,11 @@
       "matches": ["*://dash.cloudflare.com/*"],
       "js": ["cloudflare_dings.js"]
     }
-  ]
+  ],
+  "permissions": ["storage"],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "tim@witzdam.com"
+    }
+  }
 }
