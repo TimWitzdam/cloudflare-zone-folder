@@ -1,23 +1,83 @@
 let zonesFetched = false;
 let folders = [
   {
+    id: 1,
     name: "Test folder 1",
     zones: ["agencylabs.ai", "legende.cc"],
+  },
+  {
+    id: 2,
+    name: "Test folder 2",
+    zones: ["cryptodisplay.net"],
   },
 ];
 
 function getZones() {
-  let elements = document.querySelectorAll('[data-testid^="zone-card-"]');
-  console.log(elements);
-  for (folder of folders) {
+  let zones = document.querySelectorAll('[data-testid^="zone-card-"]');
+  for (zoneEl of zones) {
+    zoneEl.style.display = "none";
+  }
+  for (folder of folders.reverse()) {
     createFolderElement(folder);
   }
+}
+
+function openFolder(folderID) {
+  const folder = folders.filter((folder) => folder.id === folderID)[0];
+  let folderElements = document.querySelectorAll('[id^="folder-"]');
+  let zoneCardsEl = document.querySelector('[data-testid="zone-cards"]');
+  let zones = document.querySelectorAll('[data-testid^="zone-card-"]');
+
+  for (fEl of folderElements) {
+    fEl.style.display = "none";
+  }
+
+  for (zoneEl of zones) {
+    if (
+      folder.zones.includes(
+        zoneEl.getAttribute("data-testid").split("zone-card-")[1]
+      )
+    ) {
+      zoneEl.style.display = "flex";
+    }
+  }
+
+  const backButton = document.createElement("div");
+  if (
+    zoneCardsEl.firstElementChild.classList &&
+    zoneCardsEl.firstElementChild.classList instanceof DOMTokenList
+  ) {
+    for (c of zoneCardsEl.firstElementChild.classList) {
+      backButton.classList.add(c);
+    }
+  }
+  backButton.style.alignItems = "center";
+  backButton.style.gap = "0.5rem";
+  backButton.innerHTML = `
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M0.46967 5.46967C0.176776 5.76256 0.176776 6.23744 0.46967 6.53033L5.24264 11.3033C5.53553 11.5962 6.01041 11.5962 6.3033 11.3033C6.59619 11.0104 6.59619 10.5355 6.3033 10.2426L2.06066 6L6.3033 1.75736C6.59619 1.46447 6.59619 0.989593 6.3033 0.696699C6.01041 0.403806 5.53553 0.403806 5.24264 0.696699L0.46967 5.46967ZM12 5.25L1 5.25V6.75L12 6.75V5.25Z" fill="#313131"/>
+</svg>
+    <span>..</span>
+    `;
+  zoneCardsEl.insertBefore(backButton, zoneCardsEl.firstChild);
+  backButton.addEventListener("click", () => {
+    for (fEl of folderElements) {
+      fEl.style.display = "flex";
+    }
+
+    for (zoneEl of zones) {
+      zoneEl.style.display = "none";
+    }
+
+    backButton.remove();
+  });
 }
 
 function createFolderElement(folder) {
   let zoneCardsEl = document.querySelector('[data-testid="zone-cards"]');
   const firstCard = zoneCardsEl.firstElementChild;
   const newFolderEl = document.createElement("div");
+  newFolderEl.id = `folder-${folder.id}`;
   if (firstCard.classList && firstCard.classList instanceof DOMTokenList) {
     for (c of firstCard.classList) {
       newFolderEl.classList.add(c);
@@ -36,11 +96,13 @@ function createFolderElement(folder) {
     </div>
 </div>
   `;
-  zoneCardsEl.appendChild(newFolderEl);
+  zoneCardsEl.insertBefore(newFolderEl, zoneCardsEl.firstChild);
+
+  newFolderEl.addEventListener("click", () => openFolder(folder.id));
 }
 
-let observer = new MutationObserver(function(mutations) {
-  mutations.forEach(function(mutation) {
+let observer = new MutationObserver(function (mutations) {
+  mutations.forEach(function (mutation) {
     if (mutation.addedNodes) {
       let element = document.querySelector('[data-testid="zone-cards"]');
       if (element && !zonesFetched) {
