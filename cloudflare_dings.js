@@ -76,6 +76,52 @@ function openFolder(folder) {
     <span>..</span>
     `;
   zoneCardsEl.insertBefore(backButton, zoneCardsEl.firstChild);
+
+  let addFolderButton = document.querySelector("#add-folder-button");
+  const deleteFolderButton = addFolderButton.cloneNode(true);
+  deleteFolderButton.id = "delete-folder-button";
+  addFolderButton.style.display = "none";
+
+  deleteFolderButton.querySelector("a").innerHTML = `
+<div style="color: white;display: flex;align-items: center; gap: 1rem;">
+  <svg width="16" height="18" viewBox="0 0 16 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g clip-path="url(#clip0_388_184)">
+  <path d="M4.82857 0.622266C5.02143 0.239063 5.41786 0 5.85 0H10.15C10.5821 0 10.9786 0.239063 11.1714 0.622266L11.4286 1.125H14.8571C15.4893 1.125 16 1.62773 16 2.25C16 2.87227 15.4893 3.375 14.8571 3.375H1.14286C0.510714 3.375 0 2.87227 0 2.25C0 1.62773 0.510714 1.125 1.14286 1.125H4.57143L4.82857 0.622266ZM1.14286 4.5H14.8571V15.75C14.8571 16.991 13.8321 18 12.5714 18H3.42857C2.16786 18 1.14286 16.991 1.14286 15.75V4.5ZM4.57143 6.75C4.25714 6.75 4 7.00312 4 7.3125V15.1875C4 15.4969 4.25714 15.75 4.57143 15.75C4.88571 15.75 5.14286 15.4969 5.14286 15.1875V7.3125C5.14286 7.00312 4.88571 6.75 4.57143 6.75ZM8 6.75C7.68571 6.75 7.42857 7.00312 7.42857 7.3125V15.1875C7.42857 15.4969 7.68571 15.75 8 15.75C8.31429 15.75 8.57143 15.4969 8.57143 15.1875V7.3125C8.57143 7.00312 8.31429 6.75 8 6.75ZM11.4286 6.75C11.1143 6.75 10.8571 7.00312 10.8571 7.3125V15.1875C10.8571 15.4969 11.1143 15.75 11.4286 15.75C11.7429 15.75 12 15.4969 12 15.1875V7.3125C12 7.00312 11.7429 6.75 11.4286 6.75Z" fill="white"/>
+  </g>
+  <defs>
+  <clipPath id="clip0_388_184">
+  <rect width="16" height="18" fill="white"/>
+  </clipPath>
+  </defs>
+  </svg>
+<span>Delete folder</span>
+</div>
+`;
+
+  addFolderButton.parentElement.insertBefore(
+    deleteFolderButton,
+    addFolderButton
+  );
+
+  deleteFolderButton.addEventListener("click", () => {
+    if (
+      confirm(`Are you sure you want to delete the "${folder.name} folder?`)
+    ) {
+      browser.storage.sync.get("folders").then((data) => {
+        const newFolders = data.folders.filter((f) => f.id != folder.id);
+        browser.storage.sync.set({
+          folders: newFolders,
+        });
+
+        changeZoneAllZoneVisability("true");
+        getZones();
+        backButton.remove();
+        addFolderButton.style.display = "inline-flex";
+        deleteFolderButton.style.display = "none";
+      });
+    }
+  });
+
   backButton.addEventListener("click", () => {
     for (fEl of folderElements) {
       fEl.style.display = "flex";
@@ -85,6 +131,8 @@ function openFolder(folder) {
     hideZones();
 
     backButton.remove();
+    addFolderButton.style.display = "inline-flex";
+    deleteFolderButton.style.display = "none";
   });
 }
 
@@ -139,6 +187,7 @@ let addFolderObserver = new MutationObserver(function (mutations) {
         addFolderObserver.disconnect();
         addFolderButtonAdded = true;
         const addFolderEl = element.parentElement.cloneNode(true);
+        addFolderEl.id = "add-folder-button";
         addFolderEl.querySelector("span").innerHTML = "Add folder";
         addFolderEl.querySelector("a").href = "#";
         element.parentElement.parentElement.insertBefore(
