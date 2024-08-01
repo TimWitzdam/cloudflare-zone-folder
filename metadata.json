@@ -1,0 +1,13 @@
+{
+  "version": { "license": "MPL-2.0" },
+  "categories": { "firefox": ["other"] },
+  "contributions_url": "https://paypal.me/TimWitzdam",
+  "default_locale": "en-US",
+  "requires_payment": false,
+  "homepage": {
+    "en-US": "https://github.com/TimWitzdam/cloudflare-zone-folder"
+  },
+  "support_email": {
+    "en-US": "contact@witzdam.com"
+  }
+}

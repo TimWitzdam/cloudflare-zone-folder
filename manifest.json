@@ -1,21 +1,21 @@
 {
-  "manifest_version": 2,
-  "name": "Cloudlfare dings",
+  "manifest_version": 3,
+  "name": "Cloudflare Zone Folder",
   "version": "1.0",
-  "description": "Adds a red border to all webpages matching mozilla.org.",
+  "description": "This extension allows you to divide your Cloudflare Zones/Domains into folders.",
   "icons": {
-    "48": "cloudflare-icon.png"
+    "48": "cloudflare-icon-48.png"
   },
   "content_scripts": [
     {
       "matches": ["*://dash.cloudflare.com/*"],
-      "js": ["cloudflare_dings.js"]
+      "js": ["cloudflare-zone-folder.js"]
     }
   ],
   "permissions": ["storage"],
   "browser_specific_settings": {
     "gecko": {
-      "id": "tim@witzdam.com"
+      "id": "cloudflare-zone-folder@witzdam.com"
     }
   }
 }
