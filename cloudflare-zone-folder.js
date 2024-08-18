@@ -9,11 +9,15 @@ browser.storage.sync.get("folders").then((data) => {
 });
 
 function getIDFromZone(zone) {
-  return zone.getAttribute("data-testid").split("zone-card-")[1];
+  return zone
+    .getAttribute("data-testid")
+    .split("account-zone-selector-row--")[1];
 }
 
 function hideZones() {
-  let zones = document.querySelectorAll('[data-testid^="zone-card-"]');
+  let zones = document.querySelectorAll(
+    '[data-testid^="account-zone-selector-row--"]'
+  );
   browser.storage.sync.get("folders").then((data) => {
     let zonesInFolders = data.folders.reduce((acc, folder) => {
       return acc.concat(folder.zones);
@@ -27,9 +31,11 @@ function hideZones() {
 }
 
 function changeZoneAllZoneVisability(visible) {
-  let zones = document.querySelectorAll('[data-testid^="zone-card-"]');
+  let zones = document.querySelectorAll(
+    '[data-testid^="account-zone-selector-row--"]'
+  );
   for (zone of zones) {
-    zone.style.display = visible ? "flex" : "none";
+    zone.style.display = visible ? "table-row" : "none";
   }
 }
 
@@ -44,8 +50,10 @@ function getZones() {
 
 function openFolder(folder) {
   let folderElements = document.querySelectorAll('[id^="folder-"]');
-  let zoneCardsEl = document.querySelector('[data-testid="zone-cards"]');
-  let zones = document.querySelectorAll('[data-testid^="zone-card-"]');
+  let zoneCardsEl = document.querySelector("tbody");
+  let zones = document.querySelectorAll(
+    '[data-testid^="account-zone-selector-row--"]'
+  );
 
   changeZoneAllZoneVisability(false);
   for (fEl of folderElements) {
@@ -54,11 +62,11 @@ function openFolder(folder) {
 
   for (zoneEl of zones) {
     if (folder.zones.includes(getIDFromZone(zoneEl))) {
-      zoneEl.style.display = "flex";
+      zoneEl.style.display = "table-row";
     }
   }
 
-  const backButton = document.createElement("div");
+  const backButton = document.createElement("tr");
   if (
     zoneCardsEl.firstElementChild.classList &&
     zoneCardsEl.firstElementChild.classList instanceof DOMTokenList
@@ -70,10 +78,12 @@ function openFolder(folder) {
   backButton.style.alignItems = "center";
   backButton.style.gap = "0.5rem";
   backButton.innerHTML = `
-    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M0.46967 5.46967C0.176776 5.76256 0.176776 6.23744 0.46967 6.53033L5.24264 11.3033C5.53553 11.5962 6.01041 11.5962 6.3033 11.3033C6.59619 11.0104 6.59619 10.5355 6.3033 10.2426L2.06066 6L6.3033 1.75736C6.59619 1.46447 6.59619 0.989593 6.3033 0.696699C6.01041 0.403806 5.53553 0.403806 5.24264 0.696699L0.46967 5.46967ZM12 5.25L1 5.25V6.75L12 6.75V5.25Z" fill="#313131"/>
-</svg>
-    <span>..</span>
+    <div class="c_lo c_ms c_oj c_bk c_bj c_ok c_cd c_ol c_oo c_ci c_cj c_bq c_bm c_bp c_op c_or">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0.46967 5.46967C0.176776 5.76256 0.176776 6.23744 0.46967 6.53033L5.24264 11.3033C5.53553 11.5962 6.01041 11.5962 6.3033 11.3033C6.59619 11.0104 6.59619 10.5355 6.3033 10.2426L2.06066 6L6.3033 1.75736C6.59619 1.46447 6.59619 0.989593 6.3033 0.696699C6.01041 0.403806 5.53553 0.403806 5.24264 0.696699L0.46967 5.46967ZM12 5.25L1 5.25V6.75L12 6.75V5.25Z" fill="#313131"/>
+      </svg>
+      <span>..</span>
+    </div>
     `;
   zoneCardsEl.insertBefore(backButton, zoneCardsEl.firstChild);
 
@@ -113,7 +123,9 @@ function openFolder(folder) {
     editFolderBg.style.alignItems = "center";
     editFolderBg.style.zIndex = "10000";
 
-    let zoneElements = document.querySelectorAll('[data-testid^="zone-card-"]');
+    let zoneElements = document.querySelectorAll(
+      '[data-testid^="account-zone-selector-row--"]'
+    );
     let allZones = [];
     for (z of zoneElements) {
       allZones.push(getIDFromZone(z));
@@ -244,9 +256,9 @@ function openFolder(folder) {
 }
 
 function createFolderElement(folder) {
-  let zoneCardsEl = document.querySelector('[data-testid="zone-cards"]');
+  let zoneCardsEl = document.querySelector("tbody");
   const firstCard = zoneCardsEl.firstElementChild;
-  const newFolderEl = document.createElement("div");
+  const newFolderEl = document.createElement("tr");
   newFolderEl.id = `folder-${folder.id}`;
   if (firstCard.classList && firstCard.classList instanceof DOMTokenList) {
     for (c of firstCard.classList) {
@@ -254,7 +266,7 @@ function createFolderElement(folder) {
     }
   }
   newFolderEl.innerHTML = `
-<div style="display:flex;flex-direction: column;justify-content: space-between;gap: 0.5rem;">
+<td class="c_lo c_ms c_oj c_bk c_bj c_ok c_cd c_ol c_oo c_ci c_cj c_bq c_bm c_bp c_op c_or" style="display:flex;flex-direction: column;justify-content: space-between;gap: 0.5rem;">
     <div style="display:flex;align-items: center;gap: 0.5rem">
         <svg width="20" height="16" viewBox="0 0 27 23" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M3.375 23H23.625C25.4865 23 27 21.5266 27 19.7143V6.57143C27 4.75915 25.4865 3.28571 23.625 3.28571H15.1875C14.6549 3.28571 14.1539 3.04442 13.8375 2.62857L12.825 1.31429C12.1869 0.487723 11.185 0 10.125 0H3.375C1.51348 0 0 1.47344 0 3.28571V19.7143C0 21.5266 1.51348 23 3.375 23Z" fill="#313131"/>
@@ -274,8 +286,10 @@ function createFolderElement(folder) {
 let observer = new MutationObserver(function (mutations) {
   mutations.forEach(function (mutation) {
     if (mutation.addedNodes) {
-      let element = document.querySelector('[data-testid="zone-cards"]');
-      if (element && !zonesFetched) {
+      let element = document.querySelectorAll(
+        'tr[data-testid^="account-zone-selector-row--"]'
+      );
+      if (element.length != 0 && !zonesFetched) {
         observer.disconnect();
         zonesFetched = true;
         getZones();
@@ -315,7 +329,7 @@ let addFolderObserver = new MutationObserver(function (mutations) {
           bgEl.style.zIndex = "10000";
 
           let zoneElements = document.querySelectorAll(
-            '[data-testid^="zone-card-"]'
+            '[data-testid^="account-zone-selector-row--"]'
           );
           let zones = [];
           for (zoneEl of zoneElements) {
