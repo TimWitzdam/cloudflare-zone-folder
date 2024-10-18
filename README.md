@@ -12,7 +12,7 @@
 </div>
 <br />
 <div align="center">
-    <a href="https://chromewebstore.google.com/detail/cloudflare-zone-folder/niphajlddndlfimaajlkhioffpnooake" target="_blank">
+    <a href="https://addons.mozilla.org/en-US/firefox/addon/cloudflare-zone-folder/" target="_blank">
         <img alt="Firefox users" src="https://img.shields.io/amo/users/cloudflare-zone-folder?style=for-the-badge&logo=firefoxbrowser&logoColor=white&link=https%3A%2F%2Faddons.mozilla.org%2Fen-US%2Ffirefox%2Faddon%2Fcloudflare-zone-folder%2F" />
     </a>
     <a href="https://chromewebstore.google.com/detail/cloudflare-zone-folder/niphajlddndlfimaajlkhioffpnooake" target="_blank">
