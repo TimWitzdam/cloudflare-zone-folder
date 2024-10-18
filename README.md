@@ -4,12 +4,22 @@
     <p align="center">This extension lets you divide your <a href="https://www.cloudflare.com/" target="_blank">Cloudflare</a> Zones/Domains into folders.</p>
     <br />
     <a href="https://addons.mozilla.org/en-US/firefox/addon/cloudflare-zone-folder/" target="_blank">
-        <img alt="Get the addon on Firefox" src="https://extensionworkshop.com/assets/img/documentation/publish/get-the-addon-178x60px.dad84b42.png" />
+        <img alt="Get Cloudflare Zone Folder on Firefox" src="https://extensionworkshop.com/assets/img/documentation/publish/get-the-addon-178x60px.dad84b42.png" />
     </a>
-    <a href="#" target="_blank">
-        <img alt="Get the addon on Chrome Web Store" src="https://storage.googleapis.com/web-dev-uploads/image/WlD8wC6g8khYWPJUsQceQkhXSlv1/UV4C4ybeBTsZt43U4xis.png" />
+    <a href="https://chromewebstore.google.com/detail/cloudflare-zone-folder/niphajlddndlfimaajlkhioffpnooake" target="_blank">
+        <img alt="Get Cloudflare Zone Folder on Chrome Web Store" src="https://storage.googleapis.com/web-dev-uploads/image/WlD8wC6g8khYWPJUsQceQkhXSlv1/UV4C4ybeBTsZt43U4xis.png" />
     </a>
 </div>
+<br />
+<div align="center">
+    <a href="https://chromewebstore.google.com/detail/cloudflare-zone-folder/niphajlddndlfimaajlkhioffpnooake" target="_blank">
+        <img alt="Firefox users" src="https://img.shields.io/amo/users/cloudflare-zone-folder?style=for-the-badge&logo=firefoxbrowser&logoColor=white&link=https%3A%2F%2Faddons.mozilla.org%2Fen-US%2Ffirefox%2Faddon%2Fcloudflare-zone-folder%2F" />
+    </a>
+    <a href="https://chromewebstore.google.com/detail/cloudflare-zone-folder/niphajlddndlfimaajlkhioffpnooake" target="_blank">
+        <img alt="Chrome users" src="https://img.shields.io/chrome-web-store/users/niphajlddndlfimaajlkhioffpnooake?style=for-the-badge&logo=chromewebstore&logoColor=white&link=https%3A%2F%2Fchromewebstore.google.com%2Fdetail%2Fcloudflare-zone-folder%2Fniphajlddndlfimaajlkhioffpnooake" />
+    </a>
+</div>
+<br />
 <br />
 
 ![Cloudflare Zone Folder Preview](https://witzdam.com/images/cloudflare-zone-folder-preview.gif)
